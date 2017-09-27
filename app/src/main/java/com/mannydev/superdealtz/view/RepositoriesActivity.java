@@ -8,13 +8,14 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 
-import com.mannydev.superdealtz.controller.adapters.RepositoryAdapter;
-import com.mannydev.superdealtz.controller.Controller;
 import com.mannydev.superdealtz.R;
+import com.mannydev.superdealtz.controller.Controller;
+import com.mannydev.superdealtz.controller.adapters.RepositoryAdapter;
 import com.mannydev.superdealtz.model.Repository;
 
 import org.json.JSONArray;
@@ -24,6 +25,8 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
+
+import me.drakeet.materialdialog.MaterialDialog;
 
 /**
  * Активити для отображения списка репозиториев организации на GitHub
@@ -140,9 +143,29 @@ public class RepositoriesActivity extends AppCompatActivity {
             progressBar.setVisibility(View.INVISIBLE);
 
             //Выводим результат на экран
-            RepositoryAdapter repositoryAdapter =
+            final RepositoryAdapter repositoryAdapter =
                     new RepositoryAdapter(RepositoriesActivity.this,result);
             listRepos.setAdapter(repositoryAdapter);
+            listRepos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+                @Override
+                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
+                    Repository rep = repositoryAdapter.getRepository(i);
+                    String name = rep.getName();
+                    String description = rep.getDescription();
+                    final MaterialDialog materialDialog = new MaterialDialog(RepositoriesActivity.this);
+                    materialDialog.setTitle(org);
+                    materialDialog.setMessage("Репозиторий : " + name + "\n" + "Описание : " + "\n"
+                            + description);
+                    materialDialog.setPositiveButton("OK", new View.OnClickListener() {
+
+                        @Override
+                        public void onClick(View v) {
+                            materialDialog.dismiss();
+                        }
+                    });
+                    materialDialog.show();
+                }
+            });
             txtTitle.setText(txtTitle.getText()+" ("+repositoryAdapter.getCount()+")");
         }
     }
